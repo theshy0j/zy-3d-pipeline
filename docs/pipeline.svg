@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" font-family="'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6f6a60"/>
+    </marker>
+  </defs>
+
+  <!-- 背景：宣纸 -->
+  <rect x="0" y="0" width="1200" height="680" fill="#fbfaf7"/>
+  <rect x="0" y="0" width="1200" height="680" fill="none" stroke="#e3ded4" stroke-width="2"/>
+
+  <!-- 标题 -->
+  <text x="600" y="46" text-anchor="middle" font-size="21" font-weight="700" fill="#2b2926">zy-3d-pipeline · AI 出资产 + DCC 精修</text>
+  <text x="600" y="70" text-anchor="middle" font-size="12" fill="#7d766b">照片 / 白模 → 本地 AI 重建 → Blender 资产化 → 3ds Max / V-Ray 精修　|　流程与授权台账同源，见 LICENSE_LOG.md</text>
+
+  <!-- ============ 五个阶段 ============ -->
+  <!-- 阶段 1 输入 -->
+  <g>
+    <rect x="40" y="100" width="190" height="160" rx="10" fill="#f4f1ea" stroke="#cfc8ba" stroke-width="1.5"/>
+    <rect x="40" y="100" width="190" height="34" rx="10" fill="#e9e4d8"/>
+    <rect x="40" y="124" width="190" height="10" fill="#e9e4d8"/>
+    <text x="135" y="123" text-anchor="middle" font-size="14" font-weight="700" fill="#2b2926">① 输入</text>
+    <text x="135" y="152" text-anchor="middle" font-size="12.5" fill="#4a463f">照片 / 白模</text>
+    <text x="135" y="174" text-anchor="middle" font-size="11.5" fill="#7d766b">自有素材</text>
+    <text x="135" y="194" text-anchor="middle" font-size="11.5" fill="#7d766b">samples/&lt;case&gt;/input.png</text>
+    <text x="135" y="220" text-anchor="middle" font-size="11.5" fill="#7d766b">512–768px · 主体居中</text>
+    <text x="135" y="240" text-anchor="middle" font-size="11.5" fill="#9b3a1e">可选 rembg 去背景</text>
+  </g>
+
+  <!-- 阶段 2 AI 重建 -->
+  <g>
+    <rect x="265" y="100" width="190" height="160" rx="10" fill="#f7efe2" stroke="#d8c3a5" stroke-width="1.5"/>
+    <rect x="265" y="100" width="190" height="34" rx="10" fill="#f0e2c8"/>
+    <rect x="265" y="124" width="190" height="10" fill="#f0e2c8"/>
+    <text x="360" y="123" text-anchor="middle" font-size="14" font-weight="700" fill="#2b2926">② AI 重建（本地 GPU）</text>
+    <text x="360" y="152" text-anchor="middle" font-size="12.5" font-weight="600" fill="#4a463f">TripoSR · MIT</text>
+    <text x="360" y="174" text-anchor="middle" font-size="11.5" fill="#7d766b">单图 → 网格（顶点色）</text>
+    <text x="360" y="194" text-anchor="middle" font-size="11.5" fill="#7d766b">官方称默认 ~6GB 显存</text>
+    <text x="360" y="220" text-anchor="middle" font-size="11.5" fill="#7d766b">权重 1.6GB · HF 无门禁</text>
+    <text x="360" y="240" text-anchor="middle" font-size="11.5" fill="#2f6b3f">RTX 2060 12GB 可跑</text>
+  </g>
+
+  <!-- 阶段 3 资产化 -->
+  <g>
+    <rect x="490" y="100" width="190" height="160" rx="10" fill="#f4f1ea" stroke="#cfc8ba" stroke-width="1.5"/>
+    <rect x="490" y="100" width="190" height="34" rx="10" fill="#e9e4d8"/>
+    <rect x="490" y="124" width="190" height="10" fill="#e9e4d8"/>
+    <text x="585" y="123" text-anchor="middle" font-size="14" font-weight="700" fill="#2b2926">③ 资产化（Blender）</text>
+    <text x="585" y="152" text-anchor="middle" font-size="12.5" fill="#4a463f">headless 清理</text>
+    <text x="585" y="174" text-anchor="middle" font-size="11.5" fill="#7d766b">合并顶点 · 重算法线</text>
+    <text x="585" y="194" text-anchor="middle" font-size="11.5" fill="#7d766b">UV / 缩放归一 / 居中</text>
+    <text x="585" y="220" text-anchor="middle" font-size="11.5" fill="#7d766b">导出 FBX + GLB</text>
+    <text x="585" y="240" text-anchor="middle" font-size="11.5" fill="#7d766b">统计写入 report.json</text>
+  </g>
+
+  <!-- 阶段 4 DCC 精修 -->
+  <g>
+    <rect x="715" y="100" width="190" height="160" rx="10" fill="#f4f1ea" stroke="#cfc8ba" stroke-width="1.5"/>
+    <rect x="715" y="100" width="190" height="34" rx="10" fill="#e9e4d8"/>
+    <rect x="715" y="124" width="190" height="10" fill="#e9e4d8"/>
+    <text x="810" y="123" text-anchor="middle" font-size="14" font-weight="700" fill="#2b2926">④ DCC 精修</text>
+    <text x="810" y="152" text-anchor="middle" font-size="12.5" fill="#4a463f">3ds Max / V-Ray</text>
+    <text x="810" y="174" text-anchor="middle" font-size="11.5" fill="#7d766b">人工环节（不在自动链）</text>
+    <text x="810" y="194" text-anchor="middle" font-size="11.5" fill="#7d766b">拓扑重布 · 材质灯光</text>
+    <text x="810" y="220" text-anchor="middle" font-size="11.5" fill="#7d766b">商业软件授权自理</text>
+    <text x="810" y="240" text-anchor="middle" font-size="11.5" fill="#7d766b">FBX 交换格式</text>
+  </g>
+
+  <!-- 阶段 5 交付 -->
+  <g>
+    <rect x="940" y="100" width="190" height="160" rx="10" fill="#eef1ea" stroke="#bcc9b4" stroke-width="1.5"/>
+    <rect x="940" y="100" width="190" height="34" rx="10" fill="#dfe8d8"/>
+    <rect x="940" y="124" width="190" height="10" fill="#dfe8d8"/>
+    <text x="1035" y="123" text-anchor="middle" font-size="14" font-weight="700" fill="#2b2926">⑤ 交付资产</text>
+    <text x="1035" y="152" text-anchor="middle" font-size="12.5" fill="#4a463f">.glb / .fbx</text>
+    <text x="1035" y="174" text-anchor="middle" font-size="11.5" fill="#7d766b">+ Before/After 对比图</text>
+    <text x="1035" y="194" text-anchor="middle" font-size="11.5" fill="#7d766b">+ report.json</text>
+    <text x="1035" y="220" text-anchor="middle" font-size="11.5" fill="#7d766b">（面数/尺寸/耗时）</text>
+    <text x="1035" y="240" text-anchor="middle" font-size="11.5" fill="#2f6b3f">可直接进引擎 / 渲染器</text>
+  </g>
+
+  <!-- 箭头 -->
+  <g stroke="#6f6a60" stroke-width="1.8" fill="none">
+    <line x1="230" y1="180" x2="262" y2="180" marker-end="url(#arr)"/>
+    <line x1="455" y1="180" x2="487" y2="180" marker-end="url(#arr)"/>
+    <line x1="680" y1="180" x2="712" y2="180" marker-end="url(#arr)"/>
+    <line x1="905" y1="180" x2="937" y2="180" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- 命令说明 -->
+  <g font-size="11" fill="#9b948a">
+    <text x="135" y="290" text-anchor="middle">gen_inputs.py（占位图）/ 自备照片</text>
+    <text x="360" y="290" text-anchor="middle">run_recon.py --bake-texture</text>
+    <text x="585" y="290" text-anchor="middle">clean_mesh.py（blender -b）</text>
+    <text x="810" y="290" text-anchor="middle">人工（本管线不含）</text>
+    <text x="1035" y="290" text-anchor="middle">render_before_after.py</text>
+  </g>
+
+  <!-- 备选引擎（虚线） -->
+  <g>
+    <rect x="265" y="330" width="640" height="112" rx="10" fill="#f8f6f2" stroke="#b5ada0" stroke-width="1.4" stroke-dasharray="7 5"/>
+    <text x="285" y="356" font-size="12.5" font-weight="700" fill="#6b6459">备选引擎（默认不启用，换引擎只需改 run_recon.py 一行）</text>
+    <text x="285" y="380" font-size="11.5" fill="#7d766b">SF3D（Stability AI Community License：年收入 ≤ $1M 免费，超出需 Enterprise；权重 HF gated 需 Token）</text>
+    <text x="285" y="402" font-size="11.5" fill="#7d766b">Hunyuan3D-2.1（腾讯社区协议：地域排除 EU/英国/韩国；MAU &gt; 100 万需申请；Outputs 归使用者；12GB 显存偏紧）</text>
+    <text x="285" y="426" font-size="11.5" fill="#9b948a">三者授权全文与出处见 LICENSE_LOG.md；本仓库默认路径只用 TripoSR（MIT，无门禁，保证新机器可复现）</text>
+  </g>
+
+  <!-- 复现路径 -->
+  <g>
+    <rect x="40" y="472" width="1090" height="66" rx="10" fill="#f4f1ea" stroke="#cfc8ba" stroke-width="1.5"/>
+    <text x="60" y="497" font-size="12.5" font-weight="700" fill="#2b2926">新机器复现路径</text>
+    <text x="60" y="521" font-size="11.5" fill="#4a463f">① scripts/bootstrap.ps1（建 venv · 装 torch CUDA · 克隆 TripoSR · 无 MSVC 时自动打 CPU-mcubes 补丁）</text>
+    <text x="600" y="521" font-size="11.5" fill="#4a463f">② scripts/run_all.ps1（三案例全链路）</text>
+    <text x="850" y="521" font-size="11.5" fill="#4a463f">③ tests/verify_setup.py（环境自检）</text>
+  </g>
+
+  <!-- 授权标签行 -->
+  <g font-size="11">
+    <rect x="40" y="566" width="128" height="26" rx="13" fill="#eef1ea" stroke="#bcc9b4"/><text x="104" y="583" text-anchor="middle" fill="#3d5a3a">TripoSR · MIT</text>
+    <rect x="180" y="566" width="176" height="26" rx="13" fill="#f7efe2" stroke="#d8c3a5"/><text x="268" y="583" text-anchor="middle" fill="#8a5a1e">SF3D · Stability Community</text>
+    <rect x="368" y="566" width="212" height="26" rx="13" fill="#f7efe2" stroke="#d8c3a5"/><text x="474" y="583" text-anchor="middle" fill="#8a5a1e">Hunyuan3D-2.1 · 腾讯社区协议</text>
+    <rect x="592" y="566" width="148" height="26" rx="13" fill="#f4f1ea" stroke="#cfc8ba"/><text x="666" y="583" text-anchor="middle" fill="#5c564d">Blender · GPL</text>
+    <rect x="752" y="566" width="176" height="26" rx="13" fill="#f4f1ea" stroke="#cfc8ba"/><text x="840" y="583" text-anchor="middle" fill="#5c564d">示例输入图 · CC0（占位）</text>
+    <rect x="940" y="566" width="190" height="26" rx="13" fill="#eef1ea" stroke="#bcc9b4"/><text x="1035" y="583" text-anchor="middle" fill="#3d5a3a">本仓库代码 · MIT</text>
+  </g>
+
+  <!-- 脚注 -->
+  <text x="40" y="630" font-size="10.5" fill="#a39c92">定位：不做端到端自动生成，做「AI 出资产 + DCC 精修」。RTX 2060 12GB 实测可用；TRELLIS.2 全量 / BuildRome 不在范围内。</text>
+  <text x="40" y="650" font-size="10.5" fill="#a39c92">图与 LICENSE_LOG.md 同源更新 · zy-3d-pipeline · 2026-10-21</text>
+</svg>

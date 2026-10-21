@@ -1,0 +1,20 @@
+{
+  "input": "samples\\interior\\input.png",
+  "device": "cuda:0",
+  "torch": "2.7.1+cu126",
+  "bake_texture": true,
+  "remove_bg": false,
+  "init_seconds": 16.24,
+  "recon_seconds": 1.42,
+  "vram_peak_gb": 1.82,
+  "extract_seconds": 3.58,
+  "mesh": {
+    "vertices": 81358,
+    "faces": 162708
+  },
+  "bake_seconds": 85.9,
+  "outputs": [
+    "raw.obj",
+    "texture.png"
+  ]
+}

@@ -1,0 +1,42 @@
+# zy-3d-pipeline Python 依赖
+# 目标环境：Windows 11 + RTX 2060 12GB + Python 3.12（2026-10-21 实测通过）
+#
+# 一键安装：  powershell -File scripts/bootstrap.ps1
+# 手动安装：  pip install -r requirements.txt
+#            pip install ./third_party/torchmcubes-cpu-shim   （无 MSVC 时的 marching cubes 替代）
+#
+# ⚠️ torch 必须单独安装，PyPI 官方源上的 torch 是 CPU 版：
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+#   （cu126 包约 2.7GB，实测本机下载 6MB/s、约 8 分钟）
+#   CUDA 12.6 对应驱动 ≥ 525；本机驱动 610.88 已覆盖。
+
+# ---------- AI 重建（TripoSR 引擎） ----------
+torch>=2.1
+torchvision>=0.16
+omegaconf==2.3.0
+einops==0.7.0
+Pillow==10.1.0
+trimesh>=4.0.5
+imageio
+moderngl==5.10.0
+# transformers 不要锁 4.35.0：它要求 tokenizers<0.15，而该版本没有 cp312 Windows 轮子，
+# 会触发 Rust 源码编译（本机无 Rust 工具链）。锁 >=4.40 可拿到 tokenizers>=0.19 的轮子。
+transformers>=4.40,<5
+tokenizers>=0.19
+huggingface-hub
+PyYAML==6.0.2
+# PyMCubes（注意：是 PyMCubes 不是 mcubes——PyPI 上另有一个同名导入的 mcubes 0.1.6，
+# API 是类式 MarchingCubes，没有函数式 marching_cubes，shim 用不了）。
+# PyMCubes 0.1.6 起依赖 scipy。它是 torchmcubes CPU shim 的后端（另一后端是 scikit-image，二选一即可）。
+PyMCubes==0.1.6
+numpy
+
+# ---------- 可选：贴图烘焙路径 ----------
+# 装上 xatlas 才能用 TripoSR 的 --bake-texture（UV 展开 + 贴图烘焙）；
+# 装不上则自动走顶点色路径（颜色 baked 进顶点，glb 直接可用）。
+# 注意：xatlas 的 pip 轮子仅覆盖部分 Python 版本，失败不影响主流程。
+# xatlas-python==0.0.9
+
+# ---------- 说明 ----------
+# 网格清理/导出脚本在 Blender 自带 Python 里运行（bmesh 为内置模块），无需本文件中的包。
+# Blender 版本：4.5.3 LTS（2026-10-21 实测）。

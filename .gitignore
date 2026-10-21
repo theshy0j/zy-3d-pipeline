@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# 第三方源码（TripoSR 由 bootstrap.ps1 从 codeload 下载并打补丁，可复现）
+third_party/TripoSR/
+
+# Blender 中间文件（.blend 可用脚本重新生成）
+*.blend
+*.blend1
+blender_temp/
+
+# 模型权重走 HF 缓存，不进仓库
+.cache/
+*.ckpt
+
+# samples 中间产物（可由 scripts/run_recon.py 重新生成，验证证据保留 clean.*）
+samples/_demo*/
+samples/*/raw.obj
+
+# 系统
+Thumbs.db
+desktop.ini
+.DS_Store

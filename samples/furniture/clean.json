@@ -1,0 +1,24 @@
+{
+  "verts_before": 71247,
+  "verts_after": 46551,
+  "faces_before": 93912,
+  "faces_after": 93086,
+  "boundary_edges": 0,
+  "watertight": true,
+  "input": "furniture\\raw.obj",
+  "dims_after_normalize_m": [
+    0.7232,
+    0.5001,
+    1.0
+  ],
+  "target_size_m": 1.0,
+  "uv_layers": [
+    "UVMap"
+  ],
+  "has_vertex_colors": false,
+  "texture": "furniture\\texture.png",
+  "outputs": [
+    "clean.glb",
+    "clean.fbx"
+  ]
+}

@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "torchmcubes-cpu-shim"
+version = "0.0.1"
+description = "CPU-only marching cubes shim exposing the torchmcubes API (for Windows machines without MSVC/CUDA toolkit)"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["torchmcubes"]
