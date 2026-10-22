@@ -40,7 +40,9 @@ def main():
     ap.add_argument("--engine", default="triposr", help="重建引擎（默认 triposr）")
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--model", default="stabilityai/TripoSR", help="HF repo id 或本地权重目录")
-    ap.add_argument("--mc-resolution", type=int, default=256)
+    ap.add_argument("--mc-resolution", type=int,
+                    default=int(os.environ.get("MC_RESOLUTION", "256")),
+                    help="marching cubes 网格分辨率（默认 256；可用环境变量 MC_RESOLUTION 覆盖）")
     ap.add_argument("--chunk-size", type=int, default=8192, help="渲染分块，越小越省显存")
     ap.add_argument("--remove-bg", action="store_true", help="用 rembg 去背景（需额外安装）")
     ap.add_argument("--bake-texture", action="store_true", help="烘焙 UV 贴图（需 xatlas）")

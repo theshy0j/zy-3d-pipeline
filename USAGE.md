@@ -34,6 +34,10 @@ powershell -ExecutionPolicy Bypass -File scripts\bootstrap.ps1
 
 ## 2. 日常使用（三步）
 
+> 💡 **省时技巧**：如果每次开跑都卡一两分钟、刷 `huggingface.co timed out`，
+> 先设一次 `$env:HF_HUB_OFFLINE = "1"`（权重已缓存在本地，跳过联网校验，模型加载从 4 分钟回到 18 秒）。
+> 只在需要**首次下载新模型**时把它设回 `"0"`。
+
 ### 第 1 步：放图
 
 新建一个文件夹放你的图，图片**必须命名为 `input.png`**：
@@ -109,6 +113,7 @@ PowerShell 窗口里的报错栈最后几行通常就是原因。
 
 **Q8：能不能让网格更精细？**
 可以，设 `MC_RESOLUTION` 环境变量（marching cubes 分辨率）。默认 `256`，本机实测显存峰值 1.82GB。
+环境变量对 `run_all.ps1` 和直接调 `run_recon.py` 都生效（后者也可用 `--mc-resolution 512` 参数）。
 想提精度设 `512`：
 
 ```powershell
