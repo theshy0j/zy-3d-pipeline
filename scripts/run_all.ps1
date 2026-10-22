@@ -59,16 +59,18 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "  -- 权重已缓存，跳过下载"
 }
 
-Write-Host "== 3/7 AI 重建（TripoSR）=="
-foreach ($c in $cases) {
-    Write-Host "  -- $c"
-    if ($bake) {
-        & $Py scripts\run_recon.py --input "samples\$c\input.png" --outdir "samples\$c" --bake-texture
-    } else {
-        & $Py scripts\run_recon.py --input "samples\$c\input.png" --outdir "samples\$c"
-    }
-    if ($LASTEXITCODE -ne 0) { throw "run_recon 失败: $c" }
-}
+# 重建引擎（默认 triposr；新增引擎在 scripts/engines/ 注册后改这里即可，其余步骤无需动）
+$engine = "triposr"
+# marching cubes 分辨率：默认 256（本机实测显存 1.82GB，已验证）；
+# 设 MC_RESOLUTION=512 可提网格精度，但 512³ 未实测、有 OOM 风险（见 README §6）。
+$mcRes = if ($env:MC_RESOLUTION) { $env:MC_RESOLUTION } else { "256" }
+Write-Host "== 3/7 AI 重建（引擎：$engine，mc-resolution=$mcRes，批量共享模型初始化）=="
+# 批量：一次进程加载模型，多个案例共享初始化（约省 2×18s 的重复加载开销）
+$bakeArg = @()
+if ($bake) { $bakeArg = @("--bake-texture") }
+$reconInputs = $cases | ForEach-Object { "samples\$_\input.png" }
+& $Py scripts\run_recon.py --engine $engine --mc-resolution $mcRes --input $reconInputs --outdir samples @bakeArg
+if ($LASTEXITCODE -ne 0) { throw "run_recon 失败" }
 
 Write-Host "== 4/7 Blender 清理 + 导出 FBX/GLB =="
 foreach ($c in $cases) {

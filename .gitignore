@@ -26,3 +26,9 @@ desktop.ini
 
 # 本地工作日志/记忆（过程记录，非交付物）
 .workbuddy/
+
+# 测试结果产物（由 tests/smoke.py 生成，可重新生成）
+tests/smoke_report.json
+
+# 桌面交付报告副本（非仓库交付物，仓库内另有 README/USAGE 为准）
+zy-3d-pipeline-交付报告.md

@@ -45,7 +45,9 @@ powershell -ExecutionPolicy Bypass -File scripts\bootstrap.ps1
 （`python tests/verify_setup.py`）。
 
 可选环境变量：`PIP_INDEX`（PyPI 镜像，默认阿里云；海外设 `https://pypi.org/simple`）、
-`TORCH_CUDA`（默认 `cu126`，需驱动 ≥525；老驱动设 `cu121`）、`BLENDER_BIN`。
+`TORCH_CUDA`（默认 `cu126`，需驱动 ≥525；老驱动设 `cu121`）、`BLENDER_BIN`、
+`MC_RESOLUTION`（marching cubes 分辨率，默认 `256`；设 `512` 提网格精度，但 512³ 未实测、有 OOM 风险，见 §6）、
+`SKIP_GEN_INPUTS`、`CASES`（见 §3）。
 
 ### 手动（或非 Windows）
 
@@ -90,6 +92,8 @@ powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 # 然后用 CASES 指定案例名跑（不设 CASES 默认只跑内置 building/interior/furniture）：
 $env:SKIP_GEN_INPUTS = "1"
 $env:CASES = "<案例名>"        # 多个案例用逗号分隔，如 myasset,chair2
+# 可选：提网格精度（默认 256；512³ 未实测、有 OOM 风险，见 §6）
+$env:MC_RESOLUTION = "512"
 powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 ```
 
@@ -182,6 +186,7 @@ samples/furniture/
   shim 利用该行为，未改动 vendored 源码语义。
 - **12GB 显存**：TripoSR 256³ 实测峰值 1.82GB，余量充足；
   512³ 及以上未实测，按激活显存估算有 OOM 风险（推断，未验证）。
+  默认分辨率由 `MC_RESOLUTION` 环境变量控制（默认 `256`），切换前请确认显存余量。
 - **重建保真度**：单图重建对无纹理白模输入会出现褶皱化/特征丢失
   （见 §3.1 实测与各 `before_after.png`），AI 产物定位为「可编辑毛坯」，
   形态精修必须由 DCC 人工完成。

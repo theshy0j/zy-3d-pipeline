@@ -107,6 +107,49 @@ PowerShell 窗口里的报错栈最后几行通常就是原因。
 是随仓库的验证样本，证明管线在这台机器上跑通过。
 你可以直接用同名目录覆盖它们来跑自己的图（不设 `CASES` 时默认跑这三个）。
 
+**Q8：能不能让网格更精细？**
+可以，设 `MC_RESOLUTION` 环境变量（marching cubes 分辨率）。默认 `256`，本机实测显存峰值 1.82GB。
+想提精度设 `512`：
+
+```powershell
+$env:MC_RESOLUTION = "512"
+powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
+```
+
+⚠️ **512³ 未实测**，按激活显存估算约 4 倍（~4×1.82GB），12GB 卡有 OOM 风险；先用 `verify_setup.py` 确认显存余量，跑挂了就调回 256。
+
+### 实测方法（需你本地跑，沙箱跑不了）
+
+这两项是“你机器上的验证”，我没法在沙箱盲跑，给你现成命令和记录要点：
+
+**① 512³ 压力实测**（验证 OOM 风险到底有没有）
+
+```powershell
+# 先确认显存余量
+.venv\Scripts\python.exe tests\verify_setup.py
+# 设 512 开跑（默认三案例；想快就只跑一个：设 CASES=myasset）
+$env:MC_RESOLUTION = "512"
+powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
+```
+
+跑完看每个 `samples\<案例>\recon.json` 里的 `vram_peak_gb`：
+- 没崩 → 记下峰值，回头告诉我，我把 README §6 的“512³ 未实测”改成实测值；
+- 崩了（CUDA out of memory / 进程被杀）→ 说明 12GB 确实顶不住，老老实实用 256。
+
+**② 真实照片 vs 白模对比**（决定你以后该喂照片还是白模）
+
+```powershell
+# 1) 把一张真实照片命名为 input.png 放进案例目录
+#    samples\myphoto\input.png   ← 你的真实照片（有纹理、正面打光最佳）
+# 2) 跑（跳过占位图生成）
+$env:SKIP_GEN_INPUTS = "1"; $env:CASES = "myphoto"
+powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
+# 3) 打开 samples\myphoto\before_after.png 看还原度
+```
+
+判断标准：照片通常有真实纹理，重建比白模更准；但反光/透明/细杆（椅腿、树枝）仍容易丢特征。
+同一物体再放一张白模图跑一次，两版 `before_after.png` 并排看，就能定下你日常的“标准输入类型”。
+
 ---
 
 ## 4. 还需要干什么（收尾待办）
@@ -115,7 +158,7 @@ PowerShell 窗口里的报错栈最后几行通常就是原因。
 
 | # | 事项 | 状态 |
 |---|---|---|
-| 1 | **push 到 GitHub**：`git remote add origin <你的仓库地址>` + `git push -u origin main`，push 前先把占位身份改成你的（`git config user.email "<你的邮箱>"`） | ⬜ 待办 |
+| 1 | **push 到 GitHub**：已完成（`theshy0j/zy-3d-pipeline`，Public，main 分支） | ✅ 已完成 |
 | 2 | **用真实照片做一轮对比实验**：同一样东西拍张照片跑一次，和白模结果比保真度（决定以后输入该用照片还是白模） | ⬜ 建议 |
 | 3 | **3ds Max 末端实测**：本机没装 3ds Max/V-Ray，FBX 交换路径未经真实 DCC 验证；拿到你机器上拖一个 `clean.fbx` 确认材质/UV 正常 | ⬜ 建议 |
 | 4 | 正式投产时把占位输入图换成你有权利的照片，并在 `LICENSE_LOG.md` §6 登记 | ⬜ 用时 |

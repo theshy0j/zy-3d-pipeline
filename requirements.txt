@@ -1,42 +1,63 @@
-# zy-3d-pipeline Python 依赖
-# 目标环境：Windows 11 + RTX 2060 12GB + Python 3.12（2026-10-21 实测通过）
+# zy-3d-pipeline Python 依赖（精确锁版本，2026-10-22 基于 .venv 实测导出）
+# 目标环境：Windows 11 + RTX 2060 12GB + Python 3.12
 #
-# 一键安装：  powershell -File scripts/bootstrap.ps1
-# 手动安装：  pip install -r requirements.txt
-#            pip install ./third_party/torchmcubes-cpu-shim   （无 MSVC 时的 marching cubes 替代）
+# ⚠️ 一键安装（推荐）：  powershell -File scripts/bootstrap.ps1
+#    手动安装（不推荐）： 见下方“手动安装”说明，torch 必须先装 CUDA 版。
 #
-# ⚠️ torch 必须单独安装，PyPI 官方源上的 torch 是 CPU 版：
-#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
-#   （cu126 包约 2.7GB，实测本机下载 6MB/s、约 8 分钟）
-#   CUDA 12.6 对应驱动 ≥ 525；本机驱动 610.88 已覆盖。
+# ───────────────────────────────────────────────────────────────
+# 🔒 torch / torchvision 故意【不】写在本文件里！
+#   - PyPI / 阿里云镜像上的 Windows torch 是 CPU 构建；
+#   - 若写在此处，手动跑 `pip install -r requirements.txt` 会被误判“已满足”或拉到 CPU 版，GPU 直接不可用；
+#   - 因此统一由 bootstrap.ps1 第 2 步从 download.pytorch.org 单独装 CUDA 版：
+#       pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+#   - 本机实测锁定的 CUDA 版本（记录备查，不要写进 requirements 以免误拉 CPU 版）：
+#       torch==2.7.1+cu126
+#       torchvision==0.22.1+cu126
+#     （cu126 需驱动 ≥ 525；更老驱动改 cu121/cu118，见 bootstrap 的 TORCH_CUDA 变量）
+# ───────────────────────────────────────────────────────────────
 
-# ---------- AI 重建（TripoSR 引擎） ----------
-torch>=2.1
-torchvision>=0.16
+# ---------- AI 重建（TripoSR 引擎，必需） ----------
+# 以下全部为 .venv 实测导出的精确版本；改动任一版本请先在干净 venv 复测整条管线。
 omegaconf==2.3.0
 einops==0.7.0
 Pillow==10.1.0
-trimesh>=4.0.5
-imageio
+trimesh==5.1.1
+imageio==2.38.1
 moderngl==5.10.0
-# transformers 不要锁 4.35.0：它要求 tokenizers<0.15，而该版本没有 cp312 Windows 轮子，
-# 会触发 Rust 源码编译（本机无 Rust 工具链）。锁 >=4.40 可拿到 tokenizers>=0.19 的轮子。
-transformers>=4.40,<5
-tokenizers>=0.19
-huggingface-hub
+# transformers 必须 >=4.40，<5：4.35.0 要求 tokenizers<0.15，而该版本没有 cp312 Windows 轮子，
+# 会触发 Rust 源码编译（本机无 Rust 工具链）。此处锁定实测通过的 4.57.6，配套 tokenizers 0.22.2。
+transformers==4.57.6
+tokenizers==0.22.2
+huggingface-hub==0.36.2
 PyYAML==6.0.2
 # PyMCubes（注意：是 PyMCubes 不是 mcubes——PyPI 上另有一个同名导入的 mcubes 0.1.6，
 # API 是类式 MarchingCubes，没有函数式 marching_cubes，shim 用不了）。
-# PyMCubes 0.1.6 起依赖 scipy。它是 torchmcubes CPU shim 的后端（另一后端是 scikit-image，二选一即可）。
+# PyMCubes 0.1.6 依赖 scipy（下方已锁）。
 PyMCubes==0.1.6
-numpy
+# numpy 2.x 与 trimesh 5.1.1 / transformers 4.57.6 已实测兼容，锁 2.5.4。
+numpy==2.5.4
+
+# ---------- 关键传递依赖（一并锁死，避免上游浮动破坏复现） ----------
+scipy==1.18.1          # PyMCubes 0.1.6 的运行时依赖
+safetensors==0.8.0     # transformers 加载权重所需
+regex==2026.9.29       # transformers / tokenizers 所需
+requests==2.34.2       # huggingface-hub 所需
+filelock==4.2.4        # torch / transformers 缓存锁所需
 
 # ---------- 可选：贴图烘焙路径 ----------
 # 装上 xatlas 才能用 TripoSR 的 --bake-texture（UV 展开 + 贴图烘焙）；
 # 装不上则自动走顶点色路径（颜色 baked 进顶点，glb 直接可用）。
 # 注意：xatlas 的 pip 轮子仅覆盖部分 Python 版本，失败不影响主流程。
-# xatlas-python==0.0.9
+# xatlas==0.0.9
 
 # ---------- 说明 ----------
 # 网格清理/导出脚本在 Blender 自带 Python 里运行（bmesh 为内置模块），无需本文件中的包。
 # Blender 版本：4.5.3 LTS（2026-10-21 实测）。
+#
+# ── 手动安装（无 bootstrap 时）──
+#   1) 先装 CUDA 版 torch（见顶部说明）：
+#        pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+#   2) 再装本文件：
+#        pip install -r requirements.txt
+#   3) 装 torchmcubes CPU shim（无 MSVC 时的 marching cubes 替代）：
+#        pip install ./third_party/torchmcubes-cpu-shim
