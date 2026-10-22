@@ -121,25 +121,13 @@ $env:MC_RESOLUTION = "512"
 powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 ```
 
-⚠️ **512³ 未实测**，按激活显存估算约 4 倍（~4×1.82GB），12GB 卡有 OOM 风险；先用 `verify_setup.py` 确认显存余量，跑挂了就调回 256。
+✅ **512³ 已实测通过**（2026-10-22，RTX 2060 12GB）：显存峰值仍 1.82GB、无 OOM（显存峰值在模型推理段，
+与网格分辨率无关）；顶点数约为 256³ 的 4 倍（59,680 → 240,835），网格提取耗时 5.7s → 28.2s。
+更高分辨率（1024³）未测，想试的话留意 CPU 耗时和内存占用。
 
-### 实测方法（需你本地跑，沙箱跑不了）
+### 实测记录（已完成的本地验证）
 
-这两项是“你机器上的验证”，我没法在沙箱盲跑，给你现成命令和记录要点：
-
-**① 512³ 压力实测**（验证 OOM 风险到底有没有）
-
-```powershell
-# 先确认显存余量
-.venv\Scripts\python.exe tests\verify_setup.py
-# 设 512 开跑（默认三案例；想快就只跑一个：设 CASES=myasset）
-$env:MC_RESOLUTION = "512"
-powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
-```
-
-跑完看每个 `samples\<案例>\recon.json` 里的 `vram_peak_gb`：
-- 没崩 → 记下峰值，回头告诉我，我把 README §6 的“512³ 未实测”改成实测值；
-- 崩了（CUDA out of memory / 进程被杀）→ 说明 12GB 确实顶不住，老老实实用 256。
+**① 512³ 压力实测** —— 已完成，结论如上，已回填 README §6。
 
 **② 真实照片 vs 白模对比**（决定你以后该喂照片还是白模）
 
@@ -164,8 +152,9 @@ powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 | # | 事项 | 状态 |
 |---|---|---|
 | 1 | **push 到 GitHub**：已完成（`theshy0j/zy-3d-pipeline`，Public，main 分支） | ✅ 已完成 |
-| 2 | **用真实照片做一轮对比实验**：同一样东西拍张照片跑一次，和白模结果比保真度（决定以后输入该用照片还是白模） | ⬜ 建议 |
+| 2 | **用真实照片做一轮对比实验**：同一样东西拍张照片跑一次，和白模结果比保真度（决定以后输入该用照片还是白模），见 §3「实测方法②」 | ⬜ 建议 |
 | 3 | **3ds Max 末端实测**：本机没装 3ds Max/V-Ray，FBX 交换路径未经真实 DCC 验证；拿到你机器上拖一个 `clean.fbx` 确认材质/UV 正常 | ⬜ 建议 |
+| 4 | **512³ 实测后 push 回 GitHub**：本轮实测值已回填文档（README §1/§3.1/§6、USAGE Q8），本地两个提交待 push | ⬜ 待办 |
 | 4 | 正式投产时把占位输入图换成你有权利的照片，并在 `LICENSE_LOG.md` §6 登记 | ⬜ 用时 |
 
 ---

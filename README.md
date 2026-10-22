@@ -30,7 +30,8 @@ flowchart LR
 > **显存红线**：12GB 跑不动 TRELLIS.2 全量与 BuildRome，本管线只用
 > **TripoSR**（默认）/ SF3D / Hunyuan3D-2.1 三档。
 > TripoSR 默认参数（256³）本机实测峰值显存 **1.82GB**——官方 README 称约 6GB 是保守值，
-> 实际远低于此；512³ 分辨率未实测（按激活显存估算约 4 倍，12GB 有 OOM 风险，属推断未验证）。
+> 实际远低于此；512³ 已实测：**同样 1.82GB、无 OOM**（显存峰值在 transformer 推理段，
+> 与 marching cubes 分辨率无关；512³ 只增加 CPU 侧提取耗时，见 §6）。
 
 ## 2. 安装
 
@@ -46,7 +47,7 @@ powershell -ExecutionPolicy Bypass -File scripts\bootstrap.ps1
 
 可选环境变量：`PIP_INDEX`（PyPI 镜像，默认阿里云；海外设 `https://pypi.org/simple`）、
 `TORCH_CUDA`（默认 `cu126`，需驱动 ≥525；老驱动设 `cu121`）、`BLENDER_BIN`、
-`MC_RESOLUTION`（marching cubes 分辨率，默认 `256`；设 `512` 提网格精度，但 512³ 未实测、有 OOM 风险，见 §6）、
+`MC_RESOLUTION`（marching cubes 分辨率，默认 `256`；设 `512` 提网格精度，本机已实测无 OOM，见 §6）、
 `SKIP_GEN_INPUTS`、`CASES`（见 §3）。
 
 ### 手动（或非 Windows）
@@ -92,7 +93,7 @@ powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 # 然后用 CASES 指定案例名跑（不设 CASES 默认只跑内置 building/interior/furniture）：
 $env:SKIP_GEN_INPUTS = "1"
 $env:CASES = "<案例名>"        # 多个案例用逗号分隔，如 myasset,chair2
-# 可选：提网格精度（默认 256；512³ 未实测、有 OOM 风险，见 §6）
+# 可选：提网格精度（默认 256；512³ 本机已实测，见 §6）
 $env:MC_RESOLUTION = "512"
 powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 ```
@@ -139,6 +140,7 @@ samples/furniture/
 | building | 59,680 顶点 / 119,340 面 | 18.6 / 1.2 / 3.7 s | 71.0 s | 1.82 GB | 59,029 顶点 | ✅ true | 0.79 × 0.92 × 1.00 |
 | interior | 81,358 顶点 / 162,708 面 | 16.2 / 1.4 / 3.6 s | 85.9 s | 1.82 GB | 80,532 顶点 | ⚠️ false（3 条边界边） | 0.92 × 0.77 × 1.00 |
 | furniture | 46,964 顶点 / 93,912 面 | 17.5 / 1.5 / 3.7 s | 41.4 s | 1.82 GB | 46,551 顶点 | ✅ true | 0.72 × 0.50 × 1.00 |
+| **building @ 512³**（补充实测） | 240,835 顶点 / 481,648 面 | 9.9 / 1.3 / 28.2 s | 未跑 | 1.82 GB | —（未清理） | — | — |
 
 ⚠️ **重建保真度限制（如实记录）**：三案例的输入是无纹理白模渲染图，TripoSR 重建出的
 几何与输入形态差异明显（出现褶皱化、特征丢失，见各 `before_after.png` 目检）。
@@ -184,9 +186,11 @@ samples/furniture/
   `third_party/torchmcubes-cpu-shim` 提供同名模块，CPU 端用 PyMCubes /
   scikit-image 做 marching cubes；TripoSR 自身对 CUDA 失败有 CPU 重试逻辑，
   shim 利用该行为，未改动 vendored 源码语义。
-- **12GB 显存**：TripoSR 256³ 实测峰值 1.82GB，余量充足；
-  512³ 及以上未实测，按激活显存估算有 OOM 风险（推断，未验证）。
-  默认分辨率由 `MC_RESOLUTION` 环境变量控制（默认 `256`），切换前请确认显存余量。
+- **12GB 显存**：TripoSR 实测峰值 1.82GB（256³ 与 512³ 相同），余量充足；
+  显存峰值出现在 transformer 推理段，与 marching cubes 分辨率无关。
+  512³ 已实测：顶点数约为 256³ 的 4 倍（59,680 → 240,835），CPU 侧网格提取从 5.7s 增至 28.2s，
+  显存无变化、无 OOM（RTX 2060 12GB，2026-10-22 实测）。
+  默认分辨率由 `MC_RESOLUTION` 环境变量控制（默认 `256`），更高分辨率（1024³）仍未实测。
 - **重建保真度**：单图重建对无纹理白模输入会出现褶皱化/特征丢失
   （见 §3.1 实测与各 `before_after.png`），AI 产物定位为「可编辑毛坯」，
   形态精修必须由 DCC 人工完成。
