@@ -32,3 +32,6 @@ tests/smoke_report.json
 
 # 桌面交付报告副本（非仓库交付物，仓库内另有 README/USAGE 为准）
 zy-3d-pipeline-交付报告.md
+
+# 本地 512³ 实验产物（留档不进仓库）
+samples/_512_test/
