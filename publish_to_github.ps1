@@ -48,9 +48,13 @@ try {
 }
 
 Step "3/4 绑定远程仓库"
-git remote remove origin 2>$null | Out-Null
-git remote add origin "https://github.com/$Owner/$RepoName.git"
-Write-Host "  origin -> https://github.com/$Owner/$RepoName.git" -ForegroundColor Green
+if ((git remote 2>$null) -contains "origin") {
+    git remote set-url origin "https://github.com/$Owner/$RepoName.git"
+    Write-Host "  origin 已更新 -> https://github.com/$Owner/$RepoName.git" -ForegroundColor Green
+} else {
+    git remote add origin "https://github.com/$Owner/$RepoName.git"
+    Write-Host "  origin -> https://github.com/$Owner/$RepoName.git" -ForegroundColor Green
+}
 
 Step "4/4 推送（36.4MB，视网速 1-5 分钟）"
 git push -u origin main
