@@ -4,6 +4,8 @@
 # 环境变量：
 #   BLENDER_BIN   Blender 可执行文件路径（默认找 PATH 里的 blender）
 #   SKIP_GEN_INPUTS=1   跳过占位输入图生成（已换成自己的照片时用）
+#   CASES         逗号分隔的案例名，覆盖默认三案例（如 CASES=myasset）
+#                 自定义案例需先把 input.png 放进 samples\<案例名>\ 并设 SKIP_GEN_INPUTS=1
 #Requires -Version 5.1
 $ErrorActionPreference = "Stop"
 # 项目根目录 = 本脚本所在目录（scripts\）的上一级
@@ -15,6 +17,19 @@ $Py = ".venv\Scripts\python.exe"
 $Blender = $env:BLENDER_BIN
 if (-not $Blender) { $Blender = "blender" }
 $cases = @("building", "interior", "furniture")
+if ($env:CASES) {
+    $cases = $env:CASES.Split(",") | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
+    if ($cases.Count -eq 0) { throw "CASES 环境变量解析后为空" }
+    # 自定义案例必须已有输入图，且不应再生成占位图（否则会覆盖/无意义）
+    foreach ($c in $cases) {
+        if (-not (Test-Path "samples\$c\input.png")) {
+            throw "案例 $c 缺少 samples\$c\input.png —— 先放入输入图再跑（并设 SKIP_GEN_INPUTS=1）"
+        }
+    }
+    if ($env:SKIP_GEN_INPUTS -ne "1") {
+        Write-Host "警告：自定义案例建议同时设 SKIP_GEN_INPUTS=1，否则会重新生成占位输入图" 
+    }
+}
 
 # 国内机器访问 HuggingFace 需要镜像；海外机器删掉这两行
 $env:HF_ENDPOINT = "https://hf-mirror.com"

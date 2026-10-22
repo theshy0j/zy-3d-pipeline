@@ -87,10 +87,13 @@ python scripts/download_models.py
 powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 
 # 用自己的图：把照片/白模图命名为 input.png 放进 samples/<案例名>/
-# 然后只跑后续阶段：
+# 然后用 CASES 指定案例名跑（不设 CASES 默认只跑内置 building/interior/furniture）：
 $env:SKIP_GEN_INPUTS = "1"
+$env:CASES = "<案例名>"        # 多个案例用逗号分隔，如 myasset,chair2
 powershell -ExecutionPolicy Bypass -File scripts\run_all.ps1
 ```
+
+> 详细用法与常见问题见 **[`USAGE.md`](USAGE.md)**（小白上手指南）。
 
 三个内置案例：
 
@@ -220,6 +223,7 @@ zy-3d-pipeline/
 │   ├── TripoSR/              # vendored 源码（MIT；由 bootstrap.ps1 下载，未随仓库分发）
 │   └── torchmcubes-cpu-shim/ # marching cubes CPU 替代（本仓库原创，MIT）
 ├── samples/                  # 三个案例（输入/输出/对比图）
+├── USAGE.md                  # 小白上手指南（日常三步 + FAQ + 命令速查）
 ├── tests/verify_setup.py     # 环境自检
 ├── docs/pipeline.svg         # 流程图
 ├── LICENSE                   # MIT
